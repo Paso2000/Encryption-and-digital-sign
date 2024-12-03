@@ -29,6 +29,10 @@ public class View extends JFrame{
     private JTextField pathField;
     private File keyStorage;
 
+    private JMenuItem keyGenerate;
+
+    private JMenuItem keyLoad;
+
 
 
 
@@ -145,10 +149,10 @@ public class View extends JFrame{
             }
         });
         menuKey.add(algorithm);
-        JMenuItem keyGenerate = new JMenuItem("Generate Key");
-        JMenuItem loadKey = new JMenuItem("Load Key");
+        keyGenerate = new JMenuItem("Generate Key");
+        keyLoad = new JMenuItem("Load Key");
 
-        menuKey.add(loadKey);
+        menuKey.add(keyLoad);
         menuKey.add(keyGenerate);
 
         passwordPanel = new JPanel(new BorderLayout());
@@ -175,7 +179,7 @@ public class View extends JFrame{
         return textArea.getText();
     }
 
-    public String getHashValue() {
+    public String getPasswordValue() {
         System.out.println(new String(passwordField.getPassword()));
         return new String(passwordField.getPassword());
     }
@@ -224,6 +228,15 @@ public class View extends JFrame{
     public void addVerifyFileHashButtonListener(ActionListener listener) {
         verificarFileHash.addActionListener(listener);
     }
+    public void addGenerateKeyButtonListener(ActionListener listener) {
+        keyGenerate.addActionListener(listener);
+    }
+
+    public void addLoadKeyButtonListener(ActionListener listener) {
+        keyLoad.addActionListener(listener);
+    }
+
+
 
     // Methods to view error message
     public void showError(String errorMessage) {

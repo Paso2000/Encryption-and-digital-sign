@@ -1,8 +1,5 @@
 import controller.PBEController;
-import model.HashAlgorithm;
-import model.HashAlgorithmFile;
-import model.PBEAlgorithm;
-import model.PBEAlgorithmFile;
+import model.*;
 import view.View;
 
 public class MainTest {
@@ -11,7 +8,8 @@ public class MainTest {
         PBEAlgorithmFile pbeFile = new PBEAlgorithmFile();
         HashAlgorithm hashAlgorithm = new HashAlgorithm();
         HashAlgorithmFile hashAlgorithmFile = new HashAlgorithmFile();
+        KeyMenagement keyMenagement = new KeyMenagement();
         View view = new View();
-        PBEController controller = new PBEController(pbe, pbeFile, view,hashAlgorithm, hashAlgorithmFile);
+        PBEController controller = new PBEController(pbe, pbeFile, view,hashAlgorithm, hashAlgorithmFile, keyMenagement);
     }
 }

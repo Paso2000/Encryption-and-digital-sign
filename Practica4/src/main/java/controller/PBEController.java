@@ -1,14 +1,12 @@
 package controller;
 
-import model.HashAlgorithm;
-import model.HashAlgorithmFile;
-import model.PBEAlgorithm;
-import model.PBEAlgorithmFile;
+import model.*;
 import view.View;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Controller class for managing the interaction between the View and the Model.
@@ -21,12 +19,14 @@ public class PBEController {
     private PBEAlgorithmFile pbeAlgorithmFile;
     private HashAlgorithmFile hashAlgorithmFile;
     private HashAlgorithm hashAlgorithm;
+    private KeyMenagement keyMenagement;
     private View view;
     private String result;
 
     private String[] emptyArrray= {};
 
     private String value;
+
 
     /**
      * Constructor for PBEController.
@@ -37,11 +37,12 @@ public class PBEController {
      * @param hashAlgorithm     The algorithm for hashing and verifying messages.
      * @param hashAlgorithmFile The algorithm for hashing and verifying files.
      */
-    public PBEController(PBEAlgorithm pbeAlgorithm, PBEAlgorithmFile pbeAlgorithmFile, View view, HashAlgorithm hashAlgorithm, HashAlgorithmFile hashAlgorithmFile) {
+    public PBEController(PBEAlgorithm pbeAlgorithm, PBEAlgorithmFile pbeAlgorithmFile, View view, HashAlgorithm hashAlgorithm, HashAlgorithmFile hashAlgorithmFile, KeyMenagement keyMenagement) {
         this.pbeAlgorithm = pbeAlgorithm;
         this.pbeAlgorithmFile = pbeAlgorithmFile;
         this.hashAlgorithm = hashAlgorithm;
         this.hashAlgorithmFile = hashAlgorithmFile;
+        this.keyMenagement=keyMenagement;
         this.view = view;
 
         // Connect action listeners to the buttons in the View
@@ -51,17 +52,42 @@ public class PBEController {
         this.view.addMessageHashButtonListener(new MessageHashButtonListener());
         this.view.addFileHashButtonListener(new FileHashButtonListener());
         this.view.addVerifyFileHashButtonListener(new VerifyFileHashButtonListener());
+        this.view.addGenerateKeyButtonListener(new GenerateKeyButtonListener());
+        this.view.addLoadKeyButtonListener(new LoadKeyButtonListener());
     }
 
     /**
      * Listener for the "Hash File" button.
      * Handles file hashing operations.
      */
+    class GenerateKeyButtonListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String keyStoragePath = view.getKeyStoragePath();
+            value = view.getPasswordValue();
+            try {
+                keyMenagement.keyGenerationAndStorage(keyStoragePath,value);
+            } catch (NoSuchAlgorithmException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    class LoadKeyButtonListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String keyStoragePath = view.getKeyStoragePath();
+            value = view.getPasswordValue();
+            keyMenagement.keyLoad(keyStoragePath,value);
+        }
+    }
+
     class FileHashButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             //Value control
-            value = view.getHashValue();
+            value = view.getPasswordValue();
             if(!value.isEmpty()){
             File file = View.getFile();
             //File control
@@ -90,7 +116,7 @@ public class PBEController {
     class VerifyFileHashButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            value = view.getHashValue();
+            value = view.getPasswordValue();
             if(!value.isEmpty()){
             File file = View.getFile();
             if (file != null) {
@@ -124,7 +150,7 @@ public class PBEController {
     class MessageHashButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            value = view.getHashValue();
+            value = view.getPasswordValue();
             if(!value.isEmpty()){
             String plaintext = view.getInputText();
             String hashFunction = view.getHashAlgorithm();
@@ -147,7 +173,7 @@ public class PBEController {
     class VerifyButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            value = view.getHashValue();
+            value = view.getPasswordValue();
             if(!value.isEmpty()){
             String hashedTest = view.getInputText();
             String hashFunction = view.getHashAlgorithm();
@@ -170,7 +196,7 @@ public class PBEController {
         public void actionPerformed(ActionEvent e) {
             try {
                 File file = View.getFile();
-                String password = view.getHashValue();
+                String password = view.getPasswordValue();
                 String symmetricAlgorithm = view.getSymmetricAlgorithm();
                 pbeAlgorithmFile.Encrypt(file, password, symmetricAlgorithm);
                 view.addResult("Successfully encrypted file: " + file.getPath() +
@@ -190,7 +216,7 @@ public class PBEController {
             try {
                 File file = View.getFile();
                 if (file != null) {
-                    String password = view.getHashValue();
+                    String password = view.getPasswordValue();
                     String symmetricAlgorithm = view.getSymmetricAlgorithm();
                     pbeAlgorithmFile.Decrypt(file, password, symmetricAlgorithm);
                     view.addResult("Successfully decrypted file: " + file.getPath() +
