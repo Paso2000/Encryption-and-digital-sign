@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="symmetric_encryption_PBE" target="21" />
+      <module name="symmetric_encryption_PBE.main" target="21" />
+      <module name="symmetric_encryption_PBE.test" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
