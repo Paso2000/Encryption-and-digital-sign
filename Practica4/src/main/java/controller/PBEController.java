@@ -61,16 +61,11 @@ public class PBEController {
      * Handles file hashing operations.
      */
     class GenerateKeyButtonListener implements ActionListener{
-
         @Override
         public void actionPerformed(ActionEvent e) {
             String keyStoragePath = view.getKeyStoragePath();
             value = view.getPasswordValue();
-            try {
-                keyMenagement.keyGenerationAndStorage(keyStoragePath,value);
-            } catch (NoSuchAlgorithmException ex) {
-                throw new RuntimeException(ex);
-            }
+            keyMenagement.keyGenerationAndStorage(keyStoragePath,value);
         }
     }
 

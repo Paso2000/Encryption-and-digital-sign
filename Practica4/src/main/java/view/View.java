@@ -110,7 +110,8 @@ public class View extends JFrame{
         comboPublicKey = new JComboBox<>(new String[]{"RSA/ECB/PKCS1Padding"});
         comboPublicKey.setSelectedItem("RSA/ECB/PKCS1Padding");
         labelFilePath = new JLabel("File path for saving key");
-        pathField = new JTextField(100);
+        pathField = new JTextField("C:\\Users\\lucap\\Desktop\\pratica4.txt",100);
+
        JButton FileButton = new JButton("Choose File");
        FileButton.addActionListener(new ActionListener() {
            @Override
@@ -194,7 +195,7 @@ public class View extends JFrame{
         return (String) comboSign.getSelectedItem();}
 
     public String getKeyStoragePath() {
-        return labelFilePath.getText();}
+        return pathField.getText();}
 
     public String getHashAlgorithm(){return (String) comboHash.getSelectedItem(); }
 
