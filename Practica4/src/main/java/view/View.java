@@ -33,6 +33,8 @@ public class View extends JFrame{
 
     private JMenuItem keyLoad;
 
+    private JMenuItem printKey;
+
 
 
 
@@ -152,9 +154,11 @@ public class View extends JFrame{
         menuKey.add(algorithm);
         keyGenerate = new JMenuItem("Generate Key");
         keyLoad = new JMenuItem("Load Key");
+        printKey = new JMenuItem("Show the keys");
 
         menuKey.add(keyLoad);
         menuKey.add(keyGenerate);
+        menuKey.add(printKey);
 
         passwordPanel = new JPanel(new BorderLayout());
         passwordLabel = new JLabel("Value: ");
@@ -237,6 +241,9 @@ public class View extends JFrame{
         keyLoad.addActionListener(listener);
     }
 
+    public void addShowKeyButtonListener(ActionListener listener) {
+        printKey.addActionListener(listener);
+    }
 
 
     // Methods to view error message

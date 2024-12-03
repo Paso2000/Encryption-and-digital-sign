@@ -6,7 +6,10 @@ import view.View;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 /**
  * Controller class for managing the interaction between the View and the Model.
@@ -26,6 +29,11 @@ public class PBEController {
     private String[] emptyArrray= {};
 
     private String value;
+
+    private PublicKey publicKey;
+
+    private PrivateKey privateKey;
+
 
 
     /**
@@ -54,12 +62,23 @@ public class PBEController {
         this.view.addVerifyFileHashButtonListener(new VerifyFileHashButtonListener());
         this.view.addGenerateKeyButtonListener(new GenerateKeyButtonListener());
         this.view.addLoadKeyButtonListener(new LoadKeyButtonListener());
+        this.view.addShowKeyButtonListener(new ShowKeyButtonListener());
     }
 
     /**
      * Listener for the "Hash File" button.
      * Handles file hashing operations.
      */
+    class ShowKeyButtonListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(publicKey!=null && privateKey!=null){
+                view.addResult(publicKey.toString());
+                view.addResult(privateKey.toString());
+            }else view.addResult("No key loaded");
+        }
+    }
     class GenerateKeyButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -74,7 +93,10 @@ public class PBEController {
         public void actionPerformed(ActionEvent e) {
             String keyStoragePath = view.getKeyStoragePath();
             value = view.getPasswordValue();
-            keyMenagement.keyLoad(keyStoragePath,value);
+            KeyPair keys = keyMenagement.keyLoad(keyStoragePath,value);
+            publicKey = keys.getPublic();
+            privateKey = keys.getPrivate();
+            view.addResult("Keys loaded");
         }
     }
 
