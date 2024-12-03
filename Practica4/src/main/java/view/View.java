@@ -3,7 +3,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.util.Arrays;
 
 public class View extends JFrame{
     private File selectedFile;
@@ -22,6 +21,14 @@ public class View extends JFrame{
     private JPasswordField passwordField;
     private JLabel labelCipher;
     private JLabel labelHash;
+    private JLabel labelSign;
+    private JComboBox<String> comboSign;
+    private JLabel labelPublicKey;
+    private JComboBox<String> comboPublicKey;
+    private JLabel labelFilePath;
+    private JTextField pathField;
+    private File keyStorage;
+
 
 
 
@@ -39,9 +46,10 @@ public class View extends JFrame{
 
         // Crea il menu
         JMenu menuFile = new JMenu("File");
-        JMenu menuOption = new JMenu("Option");
+        JMenu menuKey = new JMenu("Key");
+
         menuBar.add(menuFile);
-        menuBar.add(menuOption);
+        menuBar.add(menuKey);
 
 
         // Crea le voci di menu
@@ -73,6 +81,7 @@ public class View extends JFrame{
         menuFile.add(verificarMessageHash);
         menuFile.addSeparator(); // Aggiunge una linea di separazione
         menuFile.add(Exit);
+
         labelCipher = new JLabel("Algorithm Cipher");
         comboCipher = new JComboBox<>(new String[] {
                 "PBEWithMD5AndDES", "PBEWithMD5AndTripleDES", "PBEWithSHA1AndDESede", "PBEWithSHA1AndRC2_40"
@@ -88,29 +97,59 @@ public class View extends JFrame{
         });
         comboHash.setSelectedItem("MD2");
 
+        labelSign = new JLabel("Sign Algorithm");
+        comboSign = new JComboBox<>(new String[]{"SHA1withRSA", "MD2withRSA", "MD5withRSA",
+                "SHA224withRSA", "SHA256withRSA", "SHA384withRSA","SHA512withRSA"});
+        comboSign.setSelectedItem("SHA1withRSA");
+
+        labelPublicKey = new JLabel("Public Key Algorithm");
+        comboPublicKey = new JComboBox<>(new String[]{"RSA/ECB/PKCS1Padding"});
+        comboPublicKey.setSelectedItem("RSA/ECB/PKCS1Padding");
+        labelFilePath = new JLabel("File path for saving key");
+        pathField = new JTextField(100);
+       JButton FileButton = new JButton("Choose File");
+       FileButton.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               keyStorage= getFile();
+               assert keyStorage != null;
+               pathField.setText(keyStorage.getAbsolutePath());
+           }
+       });
+
+
+
+
+
         JMenuItem algorithm = new JMenuItem("Algorithm");
         algorithm.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Crea e mostra il dialogo di configurazione
-                JDialog dialog = new JDialog(frame, "Option", true);
-                dialog.setLayout(new GridLayout(4, 1, 10, 10));
-                dialog.setSize(300, 200);
+                JDialog dialog = new JDialog(frame, "Key Option", true);
+                dialog.setLayout(new GridLayout(6, 2, 10, 10));
+                dialog.setSize(500, 200);
                 dialog.setLocationRelativeTo(frame);
 
-                // Componenti per Algoritmo Cifrado
-
-
-
-                // Aggiungi i componenti al dialogo
                 dialog.add(labelCipher);
                 dialog.add(comboCipher);
                 dialog.add(labelHash);
                 dialog.add(comboHash);
-                // Rendi visibile il dialogo
+                dialog.add(labelSign);
+                dialog.add(comboSign);
+                dialog.add(labelPublicKey);
+                dialog.add(comboPublicKey);
+                dialog.add(labelFilePath);
+                dialog.add(FileButton);
+                dialog.add(pathField);
                 dialog.setVisible(true);
             }
         });
-        menuOption.add(algorithm);
+        menuKey.add(algorithm);
+        JMenuItem keyGenerate = new JMenuItem("Generate Key");
+        JMenuItem loadKey = new JMenuItem("Load Key");
+
+        menuKey.add(loadKey);
+        menuKey.add(keyGenerate);
 
         passwordPanel = new JPanel(new BorderLayout());
         passwordLabel = new JLabel("Value: ");
@@ -143,6 +182,15 @@ public class View extends JFrame{
 
     public String getSymmetricAlgorithm() {
         return (String) comboCipher.getSelectedItem();}
+
+    public String getPublicKeyAlgorithm() {
+        return (String) comboPublicKey.getSelectedItem();}
+
+    public String getSignAlgorithm() {
+        return (String) comboSign.getSelectedItem();}
+
+    public String getKeyStoragePath() {
+        return labelFilePath.getText();}
 
     public String getHashAlgorithm(){return (String) comboHash.getSelectedItem(); }
 
