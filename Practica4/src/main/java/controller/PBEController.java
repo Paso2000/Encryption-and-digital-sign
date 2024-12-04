@@ -6,10 +6,8 @@ import view.View;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.io.IOException;
+import java.security.*;
 
 /**
  * Controller class for managing the interaction between the View and the Model.
@@ -18,11 +16,14 @@ import java.security.PublicKey;
  */
 public class PBEController {
 
-    private PBEAlgorithm pbeAlgorithm;
-    private PBEAlgorithmFile pbeAlgorithmFile;
-    private HashAlgorithmFile hashAlgorithmFile;
-    private HashAlgorithm hashAlgorithm;
-    private KeyMenagement keyMenagement;
+    private PBEAlgorithm pbeAlgorithm = new PBEAlgorithm();
+    private PBEAlgorithmFile pbeAlgorithmFile = new PBEAlgorithmFile();
+    private HashAlgorithmFile hashAlgorithmFile = new HashAlgorithmFile();
+    private HashAlgorithm hashAlgorithm = new HashAlgorithm();
+    private KeyMenagement keyMenagement = new KeyMenagement();
+
+    private DigitalSignAlgorithm digitalSignAlgorithm = new DigitalSignAlgorithm();
+    private PublicKeyAlgorithm publicKeyAlgorithm = new PublicKeyAlgorithm();
     private View view;
     private String result;
 
@@ -39,36 +40,59 @@ public class PBEController {
     /**
      * Constructor for PBEController.
      *
-     * @param pbeAlgorithm      The algorithm for encrypting and decrypting messages.
-     * @param pbeAlgorithmFile  The algorithm for encrypting and decrypting files.
      * @param view              The GUI (View) used to interact with the user.
-     * @param hashAlgorithm     The algorithm for hashing and verifying messages.
-     * @param hashAlgorithmFile The algorithm for hashing and verifying files.
      */
-    public PBEController(PBEAlgorithm pbeAlgorithm, PBEAlgorithmFile pbeAlgorithmFile, View view, HashAlgorithm hashAlgorithm, HashAlgorithmFile hashAlgorithmFile, KeyMenagement keyMenagement) {
-        this.pbeAlgorithm = pbeAlgorithm;
-        this.pbeAlgorithmFile = pbeAlgorithmFile;
-        this.hashAlgorithm = hashAlgorithm;
-        this.hashAlgorithmFile = hashAlgorithmFile;
-        this.keyMenagement=keyMenagement;
+    public PBEController(View view) {
         this.view = view;
 
         // Connect action listeners to the buttons in the View
         this.view.addEncryptButtonListener(new EncryptButtonListener());
         this.view.addDecryptButtonListener(new DecryptButtonListener());
-        this.view.addVerifyButtonListener(new VerifyButtonListener());
-        this.view.addMessageHashButtonListener(new MessageHashButtonListener());
         this.view.addFileHashButtonListener(new FileHashButtonListener());
         this.view.addVerifyFileHashButtonListener(new VerifyFileHashButtonListener());
         this.view.addGenerateKeyButtonListener(new GenerateKeyButtonListener());
         this.view.addLoadKeyButtonListener(new LoadKeyButtonListener());
         this.view.addShowKeyButtonListener(new ShowKeyButtonListener());
+        this.view.addDigitalSignButtonListener(new DigitalSignButtonListener());
+        this.view.addVerifyDigitalSignButtonListener(new VerifyDigitalSignButtonListener());
     }
 
     /**
      * Listener for the "Hash File" button.
      * Handles file hashing operations.
      */
+    class DigitalSignButtonListener implements  ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String SignAlg = view.getSignAlgorithm();
+            File file = View.getFile();
+            String password = view.getPasswordValue();
+            if(privateKey!=null && file!=null) {
+                try {
+                    digitalSignAlgorithm.Sign(file, SignAlg, privateKey);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }else view.addResult("Private key not loaded or file not choose");
+
+        }
+    }
+    class VerifyDigitalSignButtonListener implements  ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String SignAlg = view.getSignAlgorithm();
+            File file = View.getFile();
+            if(publicKey!=null && file!=null) {
+                try {
+                    digitalSignAlgorithm.Verify(file, SignAlg, publicKey);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }else view.addResult("Pu key not loaded or file not choose");
+
+        }
+        }
+
     class ShowKeyButtonListener implements ActionListener{
 
         @Override

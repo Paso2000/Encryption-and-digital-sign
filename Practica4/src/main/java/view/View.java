@@ -13,8 +13,15 @@ public class View extends JFrame{
     private JMenuItem decipher;
     private JMenuItem protegerFileWithHash;
     private JMenuItem verificarFileHash;
-    private JMenuItem protegerMessageWithHash;
-    private JMenuItem verificarMessageHash;
+
+    private JMenuItem publicKeyEncryption;
+
+    private JMenuItem publicKEyDecryption;
+
+    private JMenuItem digitalSign;
+
+    private JMenuItem verifyDigitalSign;
+
     private JMenuItem Exit;
     private JPanel passwordPanel;
     private JLabel passwordLabel;
@@ -72,8 +79,14 @@ public class View extends JFrame{
         verificarFileHash = new JMenuItem("Verify hash");
         verificarFileHash.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK));
 
-        protegerMessageWithHash = new JMenuItem("Protect message with hash");
-        verificarMessageHash = new JMenuItem("Verify message hash");
+        digitalSign = new JMenuItem("DigitalSign");
+        verifyDigitalSign = new JMenuItem("Verify DigitalSign");
+
+        publicKeyEncryption = new JMenuItem("Public Key Encryption");
+        publicKEyDecryption = new JMenuItem("Public Key Decryption");
+
+
+
 
         Exit = new JMenuItem("Exit");
         Exit.addActionListener(e -> System.exit(0));
@@ -83,8 +96,11 @@ public class View extends JFrame{
         menuFile.add(decipher);
         menuFile.add(protegerFileWithHash);
         menuFile.add(verificarFileHash);
-        menuFile.add(protegerMessageWithHash);
-        menuFile.add(verificarMessageHash);
+        menuFile.add(digitalSign);
+        menuFile.add(verifyDigitalSign);
+        menuFile.add(publicKeyEncryption);
+        menuFile.add(publicKEyDecryption);
+
         menuFile.addSeparator(); // Aggiunge una linea di separazione
         menuFile.add(Exit);
 
@@ -220,18 +236,17 @@ public class View extends JFrame{
         decipher.addActionListener(listener);
     }
 
-    public void addVerifyButtonListener(ActionListener listener) {
-        verificarMessageHash.addActionListener(listener);
-    }
-
-    public void addMessageHashButtonListener(ActionListener listener) {
-        protegerMessageWithHash.addActionListener(listener);
-    }
     public void addFileHashButtonListener(ActionListener listener) {
         protegerFileWithHash.addActionListener(listener);
     }
     public void addVerifyFileHashButtonListener(ActionListener listener) {
         verificarFileHash.addActionListener(listener);
+    }
+    public void addDigitalSignButtonListener(ActionListener listener) {
+        digitalSign.addActionListener(listener);
+    }
+    public void addVerifyDigitalSignButtonListener(ActionListener listener) {
+        verifyDigitalSign.addActionListener(listener);
     }
     public void addGenerateKeyButtonListener(ActionListener listener) {
         keyGenerate.addActionListener(listener);
