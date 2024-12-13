@@ -55,12 +55,32 @@ public class PBEController {
         this.view.addShowKeyButtonListener(new ShowKeyButtonListener());
         this.view.addDigitalSignButtonListener(new DigitalSignButtonListener());
         this.view.addVerifyDigitalSignButtonListener(new VerifyDigitalSignButtonListener());
+        this.view.addPublicKeyEncryptButtonListener(new PublicKeyEncryptButtonListener());
+        this.view.addPublicKeyDencryptButtonListener(new PublicKeyDencryptButtonListener());
     }
 
     /**
      * Listener for the "Hash File" button.
      * Handles file hashing operations.
      */
+
+    class PublicKeyEncryptButtonListener implements  ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+
+    class PublicKeyDencryptButtonListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+
+
     class DigitalSignButtonListener implements  ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {

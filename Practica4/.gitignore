@@ -1,0 +1,31 @@
+# Ignora i file di build generati da Gradle
+/build/
+
+# Ignora i file temporanei di Gradle
+/.gradle/
+
+# Ignora i file di configurazione dell'IDE (IntelliJ IDEA, Eclipse, etc.)
+.idea/
+*.iml
+*.ipr
+*.iws
+*.class
+*.jar
+
+# Ignora file di log
+*.log
+
+# Ignora file di sistema Mac OS X
+.DS_Store
+
+# Ignora file di sistema Windows
+Thumbs.db
+
+# Ignora file di configurazione di Eclipse
+.settings/
+
+# Ignora file di configurazione di NetBeans
+nbproject/private/
+
+# Ignora cartelle di output di altre IDE
+.vscode/
