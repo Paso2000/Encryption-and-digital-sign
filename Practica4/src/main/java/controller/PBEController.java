@@ -68,7 +68,18 @@ public class PBEController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            File file = View.getFile();
+            String inputFilePath = file.getAbsolutePath();
+            String outputFilePath = System.getProperty("user.home") + "/Desktop/test_encrypted.enc";
+            String algorithmName = view.getPublicKeyAlgorithm();
+            if(privateKey!=null && file!=null) {
+                try {
+                    publicKeyAlgorithm.encryptFile(inputFilePath, outputFilePath, publicKey, algorithmName);
+                    view.addResult("Crypted with succesfully [" + outputFilePath +"]");
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }else view.addResult("Private key not loaded or file not choose");
         }
     }
 
@@ -76,7 +87,18 @@ public class PBEController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            File file = View.getFile();
+            String inputFilePath = file.getAbsolutePath();
+            String outputFilePath = System.getProperty("user.home") + "/Desktop/test_decrypted.txt";
+            String algorithmName = view.getPublicKeyAlgorithm();
+            if(privateKey!=null && file!=null) {
+                try {
+                    publicKeyAlgorithm.decryptFile(inputFilePath, outputFilePath, privateKey, algorithmName);
+                    view.addResult("Decrypted with succesfully [" + outputFilePath +"]");
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }else view.addResult("Private key not loaded or file not choose");
         }
     }
 
