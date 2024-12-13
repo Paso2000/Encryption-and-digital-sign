@@ -72,7 +72,7 @@ public class PBEController {
             String inputFilePath = file.getAbsolutePath();
             String outputFilePath = System.getProperty("user.home") + "/Desktop/test_encrypted.enc";
             String algorithmName = view.getPublicKeyAlgorithm();
-            if(privateKey!=null && file!=null) {
+            if(publicKey!=null && file!=null) {
                 try {
                     publicKeyAlgorithm.encryptFile(inputFilePath, outputFilePath, publicKey, algorithmName);
                     view.addResult("Crypted with succesfully [" + outputFilePath +"]");
