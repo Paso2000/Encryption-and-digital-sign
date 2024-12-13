@@ -248,6 +248,14 @@ public class View extends JFrame{
     public void addVerifyDigitalSignButtonListener(ActionListener listener) {
         verifyDigitalSign.addActionListener(listener);
     }
+
+    public void addPublicKeyEncryptButtonListener(ActionListener listener) {
+        publicKeyEncryption.addActionListener(listener);
+    }
+    public void addPublicKeyDencryptButtonListener(ActionListener listener) {
+        publicKEyDecryption.addActionListener(listener);
+    }
+
     public void addGenerateKeyButtonListener(ActionListener listener) {
         keyGenerate.addActionListener(listener);
     }
