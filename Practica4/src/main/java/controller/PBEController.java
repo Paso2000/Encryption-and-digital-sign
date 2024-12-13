@@ -7,7 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
 
 /**
  * Controller class for managing the interaction between the View and the Model.
@@ -57,6 +60,7 @@ public class PBEController {
         this.view.addVerifyDigitalSignButtonListener(new VerifyDigitalSignButtonListener());
         this.view.addPublicKeyEncryptButtonListener(new PublicKeyEncryptButtonListener());
         this.view.addPublicKeyDencryptButtonListener(new PublicKeyDencryptButtonListener());
+        this.view.addSaveKeyButtonListener(new SaveKeyButtonListener());
     }
 
     /**
@@ -75,11 +79,11 @@ public class PBEController {
             if(publicKey!=null && file!=null) {
                 try {
                     publicKeyAlgorithm.encryptFile(inputFilePath, outputFilePath, publicKey, algorithmName);
-                    view.addResult("Crypted with succesfully [" + outputFilePath +"]");
+                    view.addResult("\nCrypted with succesfully [" + outputFilePath +"]");
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
-            }else view.addResult("Private key not loaded or file not choose");
+            }else view.addResult("\nPrivate key not loaded or file not choose");
         }
     }
 
@@ -94,11 +98,11 @@ public class PBEController {
                 try {
                     String inputFilePath = file.getAbsolutePath();
                     publicKeyAlgorithm.decryptFile(inputFilePath, outputFilePath, privateKey, algorithmName);
-                    view.addResult("Decrypted with succesfully [" + outputFilePath +"]");
+                    view.addResult("\nDecrypted with succesfully [" + outputFilePath +"]");
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
-            }else view.addResult("Private key not loaded or file not choose");
+            }else view.addResult("\nPrivate key not loaded or file not choose");
         }
     }
 
@@ -111,11 +115,11 @@ public class PBEController {
             if(privateKey!=null && file!=null) {
                 try {
                     File signedFile = digitalSignAlgorithm.Sign(file, SignAlg, privateKey);
-                    view.addResult("File signed at Path: "+ signedFile.getAbsolutePath());
+                    view.addResult("\nFile signed at Path: "+ signedFile.getAbsolutePath());
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
-            }else view.addResult("Private key not loaded or file not choose");
+            }else view.addResult("\nPrivate key not loaded or file not choose");
 
         }
     }
@@ -128,14 +132,14 @@ public class PBEController {
                 try {
                     File verifiedFile = digitalSignAlgorithm.Verify(file, SignAlg, publicKey);
                     if (verifiedFile!=null){
-                        view.addResult("Corrisponding sign, file not modified\n Verified file Path: "+ verifiedFile.getAbsolutePath());
+                        view.addResult("\nCorrisponding sign, file not modified\n Verified file Path: "+ verifiedFile.getAbsolutePath());
                     }else{
-                       view.addResult("Verification failed, file modified or wrong public key");
+                       view.addResult("\nVerification failed, file modified or wrong public key");
                     }
                 } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+                    view.addResult("\nVerification failed, file modified or wrong public key");
                 }
-            }else view.addResult("Public key not loaded or file not choose");
+            }else view.addResult("\nPublic key not loaded or file not choose");
 
         }
         }
@@ -147,16 +151,33 @@ public class PBEController {
             if(publicKey!=null && privateKey!=null){
                 view.addResult(publicKey.toString());
                 view.addResult(privateKey.toString());
-            }else view.addResult("No key loaded");
+            }else view.addResult("\nNo key loaded");
         }
     }
     class GenerateKeyButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
+            try {
+                KeyPair keyPair = keyMenagement.keyGeneration();
+                publicKey = keyPair.getPublic();
+                privateKey = keyPair.getPrivate();
+            } catch (NoSuchAlgorithmException ex) {
+                throw new RuntimeException(ex);
+            }
+            view.addResult("\nKey generate successfully");
+        }
+    }
+
+    class SaveKeyButtonListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
             String keyStoragePath = view.getKeyStoragePath();
-            value = view.getPasswordValue();
-            keyMenagement.keyGenerationAndStorage(keyStoragePath,value);
-            view.addResult("Key generate successfully");
+            if (publicKey != null && privateKey != null && Files.exists(Path.of(keyStoragePath)) && Files.isRegularFile(Path.of(keyStoragePath))) {
+                keyMenagement.keyStorage(keyStoragePath, publicKey, privateKey);
+                view.addResult("\nKey saved successfully");
+            }
+            else view.setResult("\nKey not generated yet or Saving file path not correct");
         }
     }
 
@@ -165,10 +186,15 @@ public class PBEController {
         public void actionPerformed(ActionEvent e) {
             String keyStoragePath = view.getKeyStoragePath();
             value = view.getPasswordValue();
-            KeyPair keys = keyMenagement.keyLoad(keyStoragePath,value);
+            KeyPair keys = null;
+            try {
+                keys = keyMenagement.keyLoad(keyStoragePath,value);
+            } catch (IOException | InvalidKeySpecException | NoSuchAlgorithmException | ClassNotFoundException ex) {
+                view.addResult("Key can't be loaded");
+            }
             publicKey = keys.getPublic();
             privateKey = keys.getPrivate();
-            view.addResult("Keys loaded");
+            view.addResult("\nKeys loaded");
         }
     }
 

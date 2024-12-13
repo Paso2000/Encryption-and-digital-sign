@@ -20,6 +20,8 @@ public class View extends JFrame{
 
     private JMenuItem digitalSign;
 
+    private JMenuItem keySave;
+
     private JMenuItem verifyDigitalSign;
 
     private JMenuItem Exit;
@@ -49,7 +51,7 @@ public class View extends JFrame{
 
     public View() {
         // Crea il frame
-        JFrame frame = new JFrame("Practice 3 of SRT");
+        JFrame frame = new JFrame("Practice 4 of SRT");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
 
@@ -168,12 +170,13 @@ public class View extends JFrame{
             }
         });
         menuKey.add(algorithm);
-        keyGenerate = new JMenuItem("Generate Key");
-        keyLoad = new JMenuItem("Load Key");
+        keyGenerate = new JMenuItem("Generate Keys");
+        keySave = new JMenuItem("Save keys in the file");
+        keyLoad = new JMenuItem("Load key from the file");
         printKey = new JMenuItem("Show the keys");
-
-        menuKey.add(keyLoad);
         menuKey.add(keyGenerate);
+        menuKey.add(keySave);
+        menuKey.add(keyLoad);
         menuKey.add(printKey);
 
         passwordPanel = new JPanel(new BorderLayout());
@@ -266,6 +269,10 @@ public class View extends JFrame{
 
     public void addShowKeyButtonListener(ActionListener listener) {
         printKey.addActionListener(listener);
+    }
+
+    public void addSaveKeyButtonListener(ActionListener listener) {
+        keySave.addActionListener(listener);
     }
 
 
