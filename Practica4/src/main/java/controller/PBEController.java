@@ -86,8 +86,7 @@ public class PBEController {
         public void actionPerformed(ActionEvent e) {
             String SignAlg = view.getSignAlgorithm();
             File file = View.getFile();
-            String password = view.getPasswordValue();
-            if(privateKey!=null && file!=null) {
+             if(privateKey!=null && file!=null) {
                 try {
                     digitalSignAlgorithm.Sign(file, SignAlg, privateKey);
                 } catch (Exception ex) {
@@ -108,7 +107,7 @@ public class PBEController {
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
-            }else view.addResult("Pu key not loaded or file not choose");
+            }else view.addResult("Public key not loaded or file not choose");
 
         }
         }
