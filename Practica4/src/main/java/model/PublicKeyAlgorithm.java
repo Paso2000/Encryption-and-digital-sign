@@ -22,7 +22,7 @@ public class PublicKeyAlgorithm {
      * @param algorithmName  Name of the cryptographic algorithm (e.g., "RSA").
      * @throws Exception If an error occurs during encryption.
      */
-    public void encryptFile(String inputFilePath, String outputFilePath, Key publicKey, String algorithmName) throws Exception {
+    public String encryptFile(String inputFilePath, String outputFilePath, Key publicKey, String algorithmName) throws Exception {
         Cipher cipher = Cipher.getInstance(algorithmName);
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
@@ -40,6 +40,7 @@ public class PublicKeyAlgorithm {
                 byte[] encryptedBlock = cipher.doFinal(blockToEncrypt);
                 outputStream.write(encryptedBlock);
             }
+            return outputFilePath;
         }
     }
 

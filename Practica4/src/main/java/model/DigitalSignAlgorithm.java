@@ -15,9 +15,9 @@ import java.util.Arrays;
 
 public class DigitalSignAlgorithm {
 
-    public long bytetoDelete;
+    public long bytetoDelete = 82;
 
-    public void Sign(File file, String algorithm, PrivateKey pkr) throws Exception {
+    public File Sign(File file, String algorithm, PrivateKey pkr) throws Exception {
         byte[] fileBytes = Files.readAllBytes(Path.of(file.getPath()));
         String encryptedFilePath = file.getParent() + File.separator +
                 file.getName().replaceFirst("[.][^.]+$", "") + ".SIG";
@@ -35,9 +35,10 @@ public class DigitalSignAlgorithm {
         bytetoDelete = outputStream.getByteCount(); // Store header size
         fOut.write(fileBytes);
         fOut.close();
+        return encryptedFile;
     }
 
-    public void Verify(File file, String algorithm,PublicKey pku) throws Exception {
+    public File Verify(File file, String algorithm,PublicKey pku) throws Exception {
         //take all the bytes from the file
         byte[] bytes = Files.readAllBytes(Path.of(file.getPath()));
         //create empty header
@@ -52,21 +53,16 @@ public class DigitalSignAlgorithm {
             Header header= new Header();
             header.load(cIn);
             byte [] fileBytes = Arrays.copyOfRange(bytes, (int) bytetoDelete, bytes.length);
-            System.out.println(bytetoDelete);
             byte[] calculatedHash = header.getData();
-            System.out.println(Hex.toHexString(calculatedHash));
             Signature dsa = Signature.getInstance(algorithm);
             dsa.initVerify(pku);
             dsa.update(fileBytes);
-            boolean verifies = dsa.verify(calculatedHash);
-            if(verifies){
+            boolean verify =dsa.verify(calculatedHash);
+            if (verify){
                 fileOut.write(fileBytes);
-                System.out.println("tutto bene");
-            }else {
-                System.out.println("non bene");
-            }
-
-
+                return decryptdFile;
+            }else
+                return null;
         }
     }
 

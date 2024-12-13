@@ -70,7 +70,7 @@ public class PBEController {
         public void actionPerformed(ActionEvent e) {
             File file = View.getFile();
             String inputFilePath = file.getAbsolutePath();
-            String outputFilePath = System.getProperty("user.home") + "/Desktop/test_encrypted.enc";
+            String outputFilePath = System.getProperty("user.home") + "/Desktop/test_encrypted.ENC";
             String algorithmName = view.getPublicKeyAlgorithm();
             if(publicKey!=null && file!=null) {
                 try {
@@ -88,11 +88,11 @@ public class PBEController {
         @Override
         public void actionPerformed(ActionEvent e) {
             File file = View.getFile();
-            String inputFilePath = file.getAbsolutePath();
-            String outputFilePath = System.getProperty("user.home") + "/Desktop/test_decrypted.txt";
+            String outputFilePath = System.getProperty("user.home") + "/Desktop/test_decrypted.DEC";
             String algorithmName = view.getPublicKeyAlgorithm();
             if(privateKey!=null && file!=null) {
                 try {
+                    String inputFilePath = file.getAbsolutePath();
                     publicKeyAlgorithm.decryptFile(inputFilePath, outputFilePath, privateKey, algorithmName);
                     view.addResult("Decrypted with succesfully [" + outputFilePath +"]");
                 } catch (Exception ex) {
@@ -108,9 +108,10 @@ public class PBEController {
         public void actionPerformed(ActionEvent e) {
             String SignAlg = view.getSignAlgorithm();
             File file = View.getFile();
-             if(privateKey!=null && file!=null) {
+            if(privateKey!=null && file!=null) {
                 try {
-                    digitalSignAlgorithm.Sign(file, SignAlg, privateKey);
+                    File signedFile = digitalSignAlgorithm.Sign(file, SignAlg, privateKey);
+                    view.addResult("File signed at Path: "+ signedFile.getAbsolutePath());
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -125,7 +126,12 @@ public class PBEController {
             File file = View.getFile();
             if(publicKey!=null && file!=null) {
                 try {
-                    digitalSignAlgorithm.Verify(file, SignAlg, publicKey);
+                    File verifiedFile = digitalSignAlgorithm.Verify(file, SignAlg, publicKey);
+                    if (verifiedFile!=null){
+                        view.addResult("Corrisponding sign, file not modified\n Verified file Path: "+ verifiedFile.getAbsolutePath());
+                    }else{
+                       view.addResult("Verification failed, file modified or wrong public key");
+                    }
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -150,6 +156,7 @@ public class PBEController {
             String keyStoragePath = view.getKeyStoragePath();
             value = view.getPasswordValue();
             keyMenagement.keyGenerationAndStorage(keyStoragePath,value);
+            view.addResult("Key generate successfully");
         }
     }
 
