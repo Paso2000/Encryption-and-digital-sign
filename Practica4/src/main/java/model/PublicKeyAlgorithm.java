@@ -12,6 +12,16 @@ public class PublicKeyAlgorithm {
     private static final int ENCRYPT_BLOCK_SIZE = 53; // Blocchi da 53 byte per criptare
     private static final int DECRYPT_BLOCK_SIZE = 64; // Blocchi da 64 byte per decriptare
 
+
+    /**
+     * Encrypts a file using the provided public key.
+     *
+     * @param inputFilePath  Path to the input file to encrypt.
+     * @param outputFilePath Path to save the encrypted output file.
+     * @param publicKey      Public key used for encryption.
+     * @param algorithmName  Name of the cryptographic algorithm (e.g., "RSA").
+     * @throws Exception If an error occurs during encryption.
+     */
     public void encryptFile(String inputFilePath, String outputFilePath, Key publicKey, String algorithmName) throws Exception {
         Cipher cipher = Cipher.getInstance(algorithmName);
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
@@ -32,13 +42,30 @@ public class PublicKeyAlgorithm {
             }
         }
     }
-    //To manage when a block is not full
+
+    /**
+     * Trims a byte array to the specified length.
+     * Useful when a block is smaller than the expected size.
+     *
+     * @param buffer The original buffer to trim.
+     * @param length The desired length of the trimmed array.
+     * @return A trimmed byte array.
+     */
     private static byte[] trimBytes(byte[] buffer, int length) {
         byte[] trimmed = new byte[length];
         System.arraycopy(buffer, 0, trimmed, 0, length);
         return trimmed;
     }
 
+    /**
+     * Decrypts a file using the provided private key.
+     *
+     * @param inputFilePath  Path to the input file to decrypt.
+     * @param outputFilePath Path to save the decrypted output file.
+     * @param privateKey     Private key used for decryption.
+     * @param algorithmName  Name of the cryptographic algorithm (e.g., "RSA").
+     * @throws Exception If an error occurs during decryption.
+     */
     public void decryptFile(String inputFilePath, String outputFilePath, Key privateKey, String algorithmName) throws Exception {
         Cipher cipher = Cipher.getInstance(algorithmName);
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
