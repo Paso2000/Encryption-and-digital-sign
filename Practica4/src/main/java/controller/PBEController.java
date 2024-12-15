@@ -97,8 +97,11 @@ public class PBEController {
             if(privateKey!=null && file!=null) {
                 try {
                     String inputFilePath = file.getAbsolutePath();
-                    publicKeyAlgorithm.decryptFile(inputFilePath, outputFilePath, privateKey, algorithmName);
+                  boolean isVerified =  publicKeyAlgorithm.decryptFile(inputFilePath, outputFilePath, privateKey, algorithmName);
+                  if (isVerified)
                     view.addResult("\nDecrypted with succesfully [" + outputFilePath +"]");
+                  else
+                      view.addResult("\nThis File can't be deciphered");
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -114,8 +117,8 @@ public class PBEController {
             File file = View.getFile();
             if(privateKey!=null && file!=null) {
                 try {
-                    File signedFile = digitalSignAlgorithm.Sign(file, SignAlg, privateKey);
-                    view.addResult("\nFile signed at Path: "+ signedFile.getAbsolutePath());
+                    String[] result = digitalSignAlgorithm.Sign(file, SignAlg, privateKey);
+                    view.addResult("\nFile signed at Path: "+ result[1]+"\nWith this calculated sign: "+ result[0]);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -130,9 +133,9 @@ public class PBEController {
             File file = View.getFile();
             if(publicKey!=null && file!=null) {
                 try {
-                    File verifiedFile = digitalSignAlgorithm.Verify(file, SignAlg, publicKey);
-                    if (verifiedFile!=null){
-                        view.addResult("\nCorrisponding sign, file not modified\n Verified file Path: "+ verifiedFile.getAbsolutePath());
+                    String[] result  = digitalSignAlgorithm.Verify(file, SignAlg, publicKey);
+                    if (result!=null){
+                        view.addResult("\nCorrisponding sign, file not modified\n Verified file Path: "+ result[1] + "\nPrevious hash: "+result[0]);
                     }else{
                        view.addResult("\nVerification failed, file modified or wrong public key");
                     }

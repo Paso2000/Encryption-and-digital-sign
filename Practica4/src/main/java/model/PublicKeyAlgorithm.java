@@ -1,5 +1,8 @@
 package model;
 
+import utils.Header;
+import utils.Options;
+
 import javax.crypto.Cipher;
 import java.io.*;
 import java.nio.file.Files;
@@ -7,6 +10,7 @@ import java.security.Key;
 import java.security.KeyFactory;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Objects;
 
 public class PublicKeyAlgorithm {
     private static final int ENCRYPT_BLOCK_SIZE = 53; // Blocchi da 53 byte per criptare
@@ -28,7 +32,8 @@ public class PublicKeyAlgorithm {
 
         try (FileInputStream inputStream = new FileInputStream(inputFilePath);
              FileOutputStream outputStream = new FileOutputStream(outputFilePath)) {
-
+            Header header = new Header(Options.OP_PUBLIC_CIPHER, algorithmName , Options.OP_NONE_ALGORITHM,publicKey.getEncoded());
+            header.save(outputStream);
             byte[] buffer = new byte[ENCRYPT_BLOCK_SIZE];
             int bytesRead;
 
@@ -67,24 +72,29 @@ public class PublicKeyAlgorithm {
      * @param algorithmName  Name of the cryptographic algorithm (e.g., "RSA").
      * @throws Exception If an error occurs during decryption.
      */
-    public void decryptFile(String inputFilePath, String outputFilePath, Key privateKey, String algorithmName) throws Exception {
+    public boolean decryptFile(String inputFilePath, String outputFilePath, Key privateKey, String algorithmName) throws Exception {
+        boolean canBeDeciper = true;
         Cipher cipher = Cipher.getInstance(algorithmName);
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
         try (FileInputStream inputStream = new FileInputStream(inputFilePath);
              FileOutputStream outputStream = new FileOutputStream(outputFilePath)) {
+            Header header = new Header();
+            header.load(inputStream);
+            if (header.getOperation() == Options.OP_PUBLIC_CIPHER && Objects.equals(header.getAlgorithm1(), algorithmName)) {
+                byte[] buffer = new byte[DECRYPT_BLOCK_SIZE];
+                int bytesRead;
 
-            byte[] buffer = new byte[DECRYPT_BLOCK_SIZE];
-            int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    byte[] blockToDecrypt = (bytesRead < DECRYPT_BLOCK_SIZE)
+                            ? trimBytes(buffer, bytesRead)
+                            : buffer;
 
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                byte[] blockToDecrypt = (bytesRead < DECRYPT_BLOCK_SIZE)
-                        ? trimBytes(buffer, bytesRead)
-                        : buffer;
-
-                byte[] decryptedBlock = cipher.doFinal(blockToDecrypt);
-                outputStream.write(decryptedBlock);
-            }
+                    byte[] decryptedBlock = cipher.doFinal(blockToDecrypt);
+                    outputStream.write(decryptedBlock);
+                }
+            }else canBeDeciper = false;
+            return canBeDeciper;
         }
     }
 
