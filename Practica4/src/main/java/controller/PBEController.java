@@ -73,10 +73,10 @@ public class PBEController {
         @Override
         public void actionPerformed(ActionEvent e) {
             File file = View.getFile();
-            String inputFilePath = file.getAbsolutePath();
-            String outputFilePath = System.getProperty("user.home") + "/Desktop/test_encrypted.ENC";
-            String algorithmName = view.getPublicKeyAlgorithm();
             if(publicKey!=null && file!=null) {
+                String inputFilePath = file.getAbsolutePath();
+                String outputFilePath = System.getProperty("user.home") + "/Desktop/test_encrypted.ENC";
+                String algorithmName = view.getPublicKeyAlgorithm();
                 try {
                     publicKeyAlgorithm.encryptFile(inputFilePath, outputFilePath, publicKey, algorithmName);
                     view.addResult("\nCrypted with succesfully [" + outputFilePath +"]");
@@ -87,6 +87,10 @@ public class PBEController {
         }
     }
 
+    /**
+     * Listener for the "Decrypt with Private Key" button.
+     * Handles file decryption operations using a private key.
+     */
     class PublicKeyDencryptButtonListener implements ActionListener{
 
         @Override
@@ -103,12 +107,16 @@ public class PBEController {
                   else
                       view.addResult("\nThis File can't be deciphered");
                 } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+                    view.addResult("Try again something went wrong");
                 }
             }else view.addResult("\nPrivate key not loaded or file not choose");
         }
     }
 
+    /**
+     * Listener for the "Sign File" button.
+     * Handles file signing operations.
+     */
 
     class DigitalSignButtonListener implements  ActionListener{
         @Override
@@ -126,6 +134,10 @@ public class PBEController {
 
         }
     }
+    /**
+     * Listener for the "Verify File Signature" button.
+     * Handles signature verification for files.
+     */
     class VerifyDigitalSignButtonListener implements  ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -147,6 +159,11 @@ public class PBEController {
         }
         }
 
+    /**
+     * Listener for the "Show Key" button.
+     * Displays the currently loaded public and private keys in the view.
+     * If no keys are loaded, an appropriate message is shown.
+     */
     class ShowKeyButtonListener implements ActionListener{
 
         @Override
@@ -157,6 +174,11 @@ public class PBEController {
             }else view.addResult("\nNo key loaded");
         }
     }
+    /**
+     * Listener for the "Generate Key" button.
+     * Generates a new public-private key pair and stores them in the controller.
+     * If the key generation fails, a runtime exception is thrown.
+     */
     class GenerateKeyButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -171,6 +193,12 @@ public class PBEController {
         }
     }
 
+    /**
+     * Listener for the "Save Key" button.
+     * Saves the current public and private keys to the specified file path.
+     * If the keys are not generated or the file path is invalid, a message is shown in the view.
+     */
+
     class SaveKeyButtonListener implements ActionListener{
 
         @Override
@@ -183,6 +211,12 @@ public class PBEController {
             else view.setResult("\nKey not generated yet or Saving file path not correct");
         }
     }
+
+    /**
+     * Listener for the "Load Key" button.
+     * Loads a public-private key pair from the specified file path.
+     * If the keys cannot be loaded due to an error (e.g., file not found or incorrect password), a message is shown.
+     */
 
     class LoadKeyButtonListener implements ActionListener{
         @Override
@@ -200,6 +234,13 @@ public class PBEController {
             view.addResult("\nKeys loaded");
         }
     }
+
+    /**
+     * Listener for the "Hash File" button.
+     * Hashes the selected file using the specified hash algorithm and an optional password.
+     * The hash result, algorithm used, and file size are displayed in the view.
+     * If no file is selected or no value is provided, an error message is shown.
+     */
 
     class FileHashButtonListener implements ActionListener {
         @Override
